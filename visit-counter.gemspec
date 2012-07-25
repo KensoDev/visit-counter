@@ -4,9 +4,9 @@ require File.expand_path('../lib/visit-counter/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Tom Caspy"]
   gem.email         = ["tcaspy@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Simple counter increment which only writes to DB once in a while}
+  gem.summary       = %q{No need to write to db each visit, save the visits to a quick DB like redis or memcached, and write to the SQL db once reads exeeded a certain threshold}
+  gem.homepage      = "https://github.com/KensoDev/visit-counter"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
