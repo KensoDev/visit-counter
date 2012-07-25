@@ -17,4 +17,5 @@ Gem::Specification.new do |gem|
   
   gem.add_development_dependency(%q<rspec>, [">= 0"])
   gem.add_development_dependency(%q<rake>, ["~> 0.9.2"])
+  gem.add_dependency(%q<redis>, [">= 0"])
 end

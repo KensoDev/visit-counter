@@ -1,3 +1,4 @@
+require 'rubygems'
 require "visit-counter"
 
   RSpec.configure do |config|

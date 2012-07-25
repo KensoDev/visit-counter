@@ -1,9 +1,17 @@
 module VisitCounter
   class Store
-    @@engine ||= VisitCounter::Store::Redis
+    @@engine ||= VisitCounter::Store::RedisStore
 
-    def self.set_engine(store)
-      @@engine = store
+    class << self
+
+      def set_engine(store)
+        @@engine = store
+      end
+
+      def engine
+        @@engine
+      end
+
     end
     
   end
