@@ -8,6 +8,10 @@ class DummyObject
   def update_attribute(attribute, value)
     self.send("#{attribute}=", value)
   end
+
+  def read_attribute(name)
+    eval("@#{name}")
+  end
 end
 
 VisitCounter::Store::RedisStore.redis = {host: "localhost"}
@@ -62,4 +66,23 @@ describe VisitCounter do
       @d.read_counter(:counter).should == 11
     end
   end
+
+  describe "overriding the getter" do
+    before :all do
+      DummyObject.cached_counter :counter
+    end
+
+    before :each do
+      @d = DummyObject.new
+      @d.stub!(:id).and_return(1)
+      @d.nullify_counter_cache(:counter)
+    end
+
+    it "should set the counter" do
+      @d.counter = 10
+      @d.increase_counter
+      @d.counter.should == 11
+    end
+  end
+
 end
