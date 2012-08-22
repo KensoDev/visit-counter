@@ -20,17 +20,17 @@ Or install it yourself as:
 
 a. the default storage engine is redis. If you have a global $redis for your redis connection, we default to using that. Otherwise, in an initializer you should define it by:
 
-    $ VisitCounter::Store::RedisStore.redis = {host: "your_redis_host", port: port}
+    VisitCounter::Store::RedisStore.redis = {host: "your_redis_host", port: port}
 
 b. in the class you wish to have a visit counter simply declare
-    $ include VisitCounter
+    include VisitCounter
 from this moment on, you can use the incr_counter(:counter_name), nullify_counter(:counter_name) and read_counter(:counter_name) methods
 You can also do something like this:
 
-    $ class Foo < ActiveRecord::Base
-    $   include VisitCounter
-    $   cached_counter :counter_name
-    $ end
+    class Foo < ActiveRecord::Base
+       include VisitCounter
+       cached_counter :counter_name
+    end
 
 this will override the counter_name method to read the live counter (from both database and the NoSQL storage) and add a increase_counter_name method for upping the counter by 1 (in the NoSQL and/or persist to DB when needed)
 
