@@ -7,7 +7,7 @@ module VisitCounter
       class << self
 
         def redis=(r)
-          @@redis = ::Redis.new(r)
+          @@redis = Redis.new(r)
         end
 
         def redis

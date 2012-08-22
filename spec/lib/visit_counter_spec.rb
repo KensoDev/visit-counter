@@ -41,6 +41,25 @@ describe VisitCounter do
       end
       @d.counter.should == 143
     end
+  end
 
+  describe "reading counters" do
+
+    before :each do
+      @d = DummyObject.new
+      @d.stub!(:id).and_return(1)
+      @d.nullify_counter_cache(:counter)
+    end
+
+    it "should allow to read an unchanged counter" do
+      @d.counter = 10
+      @d.read_counter(:counter).should == 10
+    end
+
+    it "should read an updated counter" do
+      @d.counter = 10
+      @d.incr_counter(:counter)
+      @d.read_counter(:counter).should == 11
+    end
   end
 end

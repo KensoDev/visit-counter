@@ -9,6 +9,14 @@ module VisitCounter
     end
   end
 
+  def read_counter(name)
+    key = VisitCounter::Key.key(self, name)
+    current_count = self.send(name).to_i
+    count = VisitCounter::Store.engine.get(key)
+
+    current_count + count
+  end
+
   def nullify_counter_cache(name)
     key = VisitCounter::Key.key(self, name)
     VisitCounter::Store.engine.nullify(key)
