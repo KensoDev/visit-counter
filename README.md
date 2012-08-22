@@ -1,6 +1,7 @@
-# Visit::Counter
+# VisitCounter
 
-TODO: Write a gem description
+VisitCounter is a gem which solves the annoying problem of counting visits and displaying them in real time. In an SQL database, for a site with a lot of hits, this can cause quite a lot of overhead. VisitCounter aims to solve this by using a quick key-value store to keep a delta, and only persist to the SQL DB when the delta crosses a certain percent of the saved counter.
+It can be used transparently, by overriding the accessor to the counter, or simply by using the helper functions it defines - incr_counter, read_counter, get_counter_delta and nullify_counter.
 
 ## Installation
 
@@ -18,9 +19,9 @@ Or install it yourself as:
 
 ## Usage
 
-a. the default storage engine is redis. If you have a global $redis for your redis connection, we default to using that. Otherwise, in an initializer you should define it by:
+a. the default storage engine is redis. If you have a global $redis for your redis connection, we default to using that. Otherwise, or if you want to specify a different connection, in an initializer you should define it by:
 
-    VisitCounter::Store::RedisStore.redis = {host: "your_redis_host", port: port}
+    VisitCounter::Store::RedisStore.redis = Redis.new(host: "your_redis_host", port: port)
 
 b. in the class you wish to have a visit counter simply declare
     include VisitCounter

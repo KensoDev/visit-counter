@@ -16,10 +16,14 @@ module VisitCounter
       end
     end
 
-    def read_counter(name)
+    def get_counter_delta(name)
       key = VisitCounter::Key.key(self, name)
+      VisitCounter::Store.engine.get(key)
+    end
+
+    def read_counter(name)
       current_count = self.send(:read_attribute, name).to_i
-      count = VisitCounter::Store.engine.get(key)
+      count = get_counter_delta(name)
 
       current_count + count
     end

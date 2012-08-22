@@ -15,7 +15,7 @@ class DummyObject
   end
 end
 
-VisitCounter::Store::RedisStore.redis = {host: "localhost"}
+VisitCounter::Store::RedisStore.redis = Redis.new(host: "localhost")
 
 describe VisitCounter do
   describe "incrementing counters" do

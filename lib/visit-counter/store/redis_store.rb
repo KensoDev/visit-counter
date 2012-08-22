@@ -7,7 +7,11 @@ module VisitCounter
       class << self
 
         def redis=(r)
-          @@redis = Redis.new(r)
+          if r.is_a?(Redis)
+            @@redis = r
+          else
+            @@redis = Redis.new(r)
+          end
         end
 
         def redis
