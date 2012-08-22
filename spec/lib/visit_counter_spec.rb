@@ -10,6 +10,7 @@ class DummyObject
   end
 
   def read_attribute(name)
+    #yeah, evals are evil, but it works and it's for testing purposes only. we assume read_attribute is defined the same as in AR wherever we include this module
     eval("@#{name}")
   end
 end
@@ -76,6 +77,11 @@ describe VisitCounter do
       @d = DummyObject.new
       @d.stub!(:id).and_return(1)
       @d.nullify_counter_cache(:counter)
+    end
+
+    it "should define the methods" do
+      @d.should respond_to(:real_counter)
+      @d.should respond_to(:increase_counter)
     end
 
     it "should set the counter" do

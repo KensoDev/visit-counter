@@ -33,6 +33,8 @@ module VisitCounter
   module ClassMethods
 
     def cached_counter(name)
+      self.send(:alias_method, "real_#{name}", name)
+
       self.send(:define_method, name) do
         read_counter(name)
       end
