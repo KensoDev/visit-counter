@@ -11,7 +11,11 @@ module VisitCounter
         end
 
         def redis
-          @@redis
+          if @@redis.nil? && defined?($redis)
+            @@redis = $redis
+          else
+            @@redis
+          end
         end
 
         def incr(key)
