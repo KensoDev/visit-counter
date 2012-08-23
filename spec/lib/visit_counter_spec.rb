@@ -80,7 +80,6 @@ describe VisitCounter do
     end
 
     it "should define the methods" do
-      @d.should respond_to(:real_counter)
       @d.should respond_to(:increase_counter)
     end
 
