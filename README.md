@@ -35,6 +35,22 @@ You can also do something like this:
 
 this will override the counter_name method to read the live counter (from both database and the NoSQL storage) and add a increase_counter_name method for upping the counter by 1 (in the NoSQL and/or persist to DB when needed)
 
+##Thresholds
+
+the default behaviour of visit counter is that once the visits pass 30% of the staged number, the visit counter stages the changes and nullifies the delta. You can, however, tweak that method. including VisitCounter in a class creates two class attribute_accessors, one named visit_counter_threshold_method, the other visit_counter_threshold.
+visit_counter_threshold_method accepts either :static or :percent (the default), the threshold is either the decimal percent (0.1 for 10%) or an integer for :static. in case of the :static method you will percist to the DB once every (threshold) times the counter goes up.
+
+so you might want to do something like that:
+
+    class Foo < ActiveRecord::Base
+       include VisitCounter
+       cached_counter :counter_name
+       visit_counter_threshold_method = :static
+       visit_counter_threshold = 100
+    end
+
+if you want the counter to persist to database once every 100 views.
+
 ## Contributing
 
 1. Fork it
