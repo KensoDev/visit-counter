@@ -1,6 +1,12 @@
 module VisitCounter
 
   def self.included(base)
+    base.class_eval do
+      class << self
+        #defining class instance attributes
+        attr_accessor :visit_counter_threshold, :visit_counter_threshold_method
+      end
+    end
     base.send(:include, InstanceMethods)
     base.send(:extend, ClassMethods)
   end
@@ -9,10 +15,9 @@ module VisitCounter
     def incr_counter(name)
       key = VisitCounter::Key.key(self, name)
       count = VisitCounter::Store.engine.incr(key)
-      current_count = self.send(:read_attribute, name).to_i
-      if current_count / (current_count + count).to_f < 0.7
-        self.update_attribute(name, current_count + count)
-        nullify_counter_cache(name)
+      staged_count = self.send(:read_attribute, name).to_i
+      if Helper.passed_limit?(self, staged_count, count, name)
+        Helper.persist(self, staged_count, count, name)
       end
     end
 
@@ -46,6 +51,34 @@ module VisitCounter
         incr_counter(name)
       end
     end
+  end
 
+  class Helper
+    class << self
+      def passed_limit?(object, staged_count, diff, name)
+        method = object.class.visit_counter_threshold_method || :percent
+        threshold = object.class.visit_counter_threshold || default_threshold(method)
+
+        if method.to_sym == :static
+          diff >= threshold
+        elsif method.to_sym == :percent
+          return true if staged_count.to_i == 0
+          diff.to_f / staged_count.to_f >= threshold
+        end
+      end
+
+      def persist(object, staged_count, diff, name)
+        object.update_attribute(name, staged_count + diff)
+        object.nullify_counter_cache(name)
+      end
+
+      def default_threshold(method)
+        if method.to_sym == :static
+          10
+        elsif method.to_sym == :percent
+          0.3
+        end
+      end
+    end
   end
 end

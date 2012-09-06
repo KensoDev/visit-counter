@@ -35,16 +35,16 @@ describe VisitCounter do
       @d.counter = 100
       @d.incr_counter(:counter)
       @d.counter.should == 100
-      43.times do
+      30.times do
         @d.incr_counter(:counter)
       end
-      @d.counter.should == 143
+      @d.counter.should == 130
 
       #should still be 143, because of the percentage thingie
-      43.times do
+      30.times do
         @d.incr_counter(:counter)
       end
-      @d.counter.should == 143
+      @d.counter.should == 130
     end
   end
 
@@ -65,6 +65,48 @@ describe VisitCounter do
       @d.counter = 10
       @d.incr_counter(:counter)
       @d.read_counter(:counter).should == 11
+    end
+  end
+
+  describe "static threshold" do
+    before :each do
+      @d = DummyObject.new
+      @d.stub!(:id).and_return(1)
+      @d.nullify_counter_cache(:counter)
+      DummyObject.visit_counter_threshold_method = :static
+    end
+
+    it "should persist after setting a static threshold of 1" do
+      DummyObject.visit_counter_threshold = 1
+      @d.counter = 10
+      @d.incr_counter(:counter)
+      @d.counter.should == 11
+    end
+
+    it "should not persist after setting a static threshold of 2" do
+      DummyObject.visit_counter_threshold = 2
+      @d.counter = 10
+      @d.incr_counter(:counter)
+      @d.counter.should == 10
+
+      @d.incr_counter(:counter)
+      @d.counter.should == 12
+    end
+  end
+
+  describe "percent threshold" do
+    before :each do
+      @d = DummyObject.new
+      @d.stub!(:id).and_return(1)
+      @d.nullify_counter_cache(:counter)
+      DummyObject.visit_counter_threshold_method = :percent
+    end
+
+    it "should persist when passing a percent" do
+      DummyObject.visit_counter_threshold = 0.1
+      @d.counter = 10
+      @d.incr_counter(:counter)
+      @d.counter.should == 11
     end
   end
 
