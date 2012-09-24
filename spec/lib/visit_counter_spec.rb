@@ -16,6 +16,7 @@ class DummyObject
 end
 
 VisitCounter::Store::RedisStore.redis = Redis.new(host: "localhost")
+VisitCounter::Store::RedisStore.redis.flushdb
 
 describe VisitCounter do
   describe "incrementing counters" do
@@ -118,18 +119,18 @@ describe VisitCounter do
     end
 
     it "should lock object when updating" do
-      VisitCounter::Helper.should_receive(:lock)
+      VisitCounter::Store.engine.should_receive(:with_lock)
       VisitCounter::Helper.persist(@d, 1, 1, :counter)
     end
 
     it "should not persist if object is locked" do
-      VisitCounter::Store.engine.stub!(:locked?).and_return(true)
+      VisitCounter::Store.engine.stub!(:aquire_lock!).and_return(false)
       @d.should_not_receive(:update_attribute)
       VisitCounter::Helper.persist(@d, 1, 1, :counter)
     end
 
     it "should persist if object is locked" do
-      VisitCounter::Store.engine.stub!(:locked?).and_return(false)
+      VisitCounter::Store.engine.stub!(:aquire_lock!).and_return(true)
       @d.should_receive(:update_attribute)
       VisitCounter::Helper.persist(@d, 1, 1, :counter)
     end

@@ -72,7 +72,7 @@ module VisitCounter
       end
 
       def persist(object, staged_count, diff, name)
-        lock(object) do
+        VisitCounter::Store.engine.with_lock(object) do
           object.update_attribute(name, staged_count + diff)
           object.nullify_counter_cache(name, diff)
         end
@@ -83,15 +83,6 @@ module VisitCounter
           10
         elsif method.to_sym == :percent
           0.3
-        end
-      end
-
-      def lock(object)
-        unless VisitCounter::Store.engine.locked?(object)
-          VisitCounter::Store.engine.lock!(object)
-          result = yield
-          VisitCounter::Store.engine.unlock!(object)
-          result
         end
       end
 
