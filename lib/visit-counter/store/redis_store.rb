@@ -51,10 +51,14 @@ module VisitCounter
         end
 
         def with_lock(object, &block)
-          if aquire_lock!(object)
-            result = yield
+          begin
+            if aquire_lock!(object)
+              result = yield
+              unlock!(object)
+              result
+            end
+          rescue
             unlock!(object)
-            result
           end
         end
 
