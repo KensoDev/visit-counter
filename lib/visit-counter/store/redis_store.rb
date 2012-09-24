@@ -34,6 +34,32 @@ module VisitCounter
           redis.set(key, 0)
         end
 
+        def substract(key, by)
+          redis.decrby(key, by)
+        end
+
+        def aquire_lock!(object)
+          redis.setnx(lock_key(object), 1)
+        end
+
+        def unlock!(object)
+          redis.del(lock_key(object))
+        end
+
+        def lock_key(object)
+          "#{object.class.name.downcase}_#{object.id}_object_cache_lock"
+        end
+
+        def with_lock(object, &block)
+          if aquire_lock!(object)
+            begin
+              yield
+            ensure
+              unlock!(object)
+            end
+          end
+        end
+
       end
     end
   end

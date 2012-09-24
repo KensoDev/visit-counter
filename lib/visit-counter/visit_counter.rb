@@ -33,9 +33,13 @@ module VisitCounter
       current_count + count
     end
 
-    def nullify_counter_cache(name)
+    def nullify_counter_cache(name, substract = nil)
       key = VisitCounter::Key.key(self, name)
-      VisitCounter::Store.engine.nullify(key)
+      if substract
+        VisitCounter::Store.engine.substract(key, substract)
+      else
+        VisitCounter::Store.engine.nullify(key)
+      end
     end
   end
 
@@ -68,8 +72,10 @@ module VisitCounter
       end
 
       def persist(object, staged_count, diff, name)
-        object.update_attribute(name, staged_count + diff)
-        object.nullify_counter_cache(name)
+        VisitCounter::Store.engine.with_lock(object) do
+          object.update_attribute(name, staged_count + diff)
+          object.nullify_counter_cache(name, diff)
+        end
       end
 
       def default_threshold(method)
@@ -79,6 +85,7 @@ module VisitCounter
           0.3
         end
       end
+
     end
   end
 end
