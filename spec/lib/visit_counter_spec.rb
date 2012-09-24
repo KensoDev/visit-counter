@@ -110,6 +110,31 @@ describe VisitCounter do
     end
   end
 
+  describe "locked objects" do
+    before :each do
+      @d = DummyObject.new
+      @d.stub!(:id).and_return(1)
+      @d.nullify_counter_cache(:counter)
+    end
+
+    it "should lock object when updating" do
+      VisitCounter::Helper.should_receive(:lock)
+      VisitCounter::Helper.persist(@d, 1, 1, :counter)
+    end
+
+    it "should not persist if object is locked" do
+      VisitCounter::Store.engine.stub!(:locked?).and_return(true)
+      @d.should_not_receive(:update_attribute)
+      VisitCounter::Helper.persist(@d, 1, 1, :counter)
+    end
+
+    it "should persist if object is locked" do
+      VisitCounter::Store.engine.stub!(:locked?).and_return(false)
+      @d.should_receive(:update_attribute)
+      VisitCounter::Helper.persist(@d, 1, 1, :counter)
+    end
+  end
+
   describe "overriding the getter" do
     before :all do
       DummyObject.cached_counter :counter
