@@ -1,5 +1,7 @@
 # VisitCounter
 
+[![Build Status](https://secure.travis-ci.org/KensoDev/visit-counter.png)](https://secure.travis-ci.org/KensoDev/visit-counter)
+
 VisitCounter is a gem which solves the annoying problem of counting visits and displaying them in real time. In an SQL database, for a site with a lot of hits, this can cause quite a lot of overhead. VisitCounter aims to solve this by using a quick key-value store to keep a delta, and only persist to the SQL DB when the delta crosses a certain percent of the saved counter.
 It can be used transparently, by overriding the accessor to the counter, or simply by using the helper functions it defines - incr_counter, read_counter, get_counter_delta and nullify_counter.
 
