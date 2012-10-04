@@ -38,7 +38,7 @@ module VisitCounter
           redis.decrby(key, by)
         end
 
-        def aquire_lock!(object)
+        def acquire_lock(object)
           redis.setnx(lock_key(object), 1)
         end
 
@@ -51,7 +51,7 @@ module VisitCounter
         end
 
         def with_lock(object, &block)
-          if aquire_lock!(object)
+          if acquire_lock(object)
             begin
               yield
             ensure
