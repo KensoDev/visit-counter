@@ -124,13 +124,13 @@ describe VisitCounter do
     end
 
     it "should not persist if object is locked" do
-      VisitCounter::Store.engine.stub!(:aquire_lock!).and_return(false)
+      VisitCounter::Store.engine.stub!(:acquire_lock).and_return(false)
       @d.should_not_receive(:update_attribute)
       VisitCounter::Helper.persist(@d, 1, 1, :counter)
     end
 
     it "should persist if object is locked" do
-      VisitCounter::Store.engine.stub!(:aquire_lock!).and_return(true)
+      VisitCounter::Store.engine.stub!(:acquire_lock).and_return(true)
       @d.should_receive(:update_attribute)
       VisitCounter::Helper.persist(@d, 1, 1, :counter)
     end
