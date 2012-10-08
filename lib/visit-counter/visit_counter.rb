@@ -49,7 +49,7 @@ module VisitCounter
   module ClassMethods
 
     ## override counter threshold. update method counters from the given Time
-    ## E.g. Post.update_counters(:num_reads, 1.hour.ago) will all items that received hits in the last hour
+    ## E.g. Post.update_counters(:num_reads, 1.hour.ago) will update all items that received hits in the last hour
     def update_counters(name, from_time_ago)
       set_name = VisitCounter::Key.generate(name, self)
       counters_in_timeframe = VisitCounter::Store.engine.get_all_by_range(set_name, from_time_ago.to_i, Time.now.to_i)
