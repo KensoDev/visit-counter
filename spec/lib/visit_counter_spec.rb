@@ -163,7 +163,7 @@ describe VisitCounter do
   end
   
   describe "persist with callbacks" do
-    it "should use save method" do
+    it "should use update_something method" do
       @d = DummyObject.new
       @d.class.update_callback_method = :update_something
       @d.stub!(:id).and_return(1)

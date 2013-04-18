@@ -4,7 +4,7 @@ module VisitCounter
     base.class_eval do
       class << self
         #defining class instance attributes
-        attr_accessor :visit_counter_threshold, :visit_counter_threshold_method, :persist_with_callbacks
+        attr_accessor :visit_counter_threshold, :visit_counter_threshold_method, :update_callback_method
       end
     end
     base.send(:include, InstanceMethods)
@@ -74,8 +74,8 @@ module VisitCounter
       def persist(object, staged_count, diff, name)
         VisitCounter::Store.engine.with_lock(object) do
           object.update_attribute(name, staged_count + diff)
-          if object.class.persist_with_callbacks
-            object.send(object.class.persist_with_callbacks)
+          if object.class.update_callback_method
+            object.send(object.class.update_callback_method)
           end
           object.nullify_counter_cache(name, diff)
         end
