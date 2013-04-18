@@ -3,11 +3,15 @@ require "spec_helper"
 class DummyObject
   include VisitCounter
 
-  attr_accessor :counter
+  attr_accessor :counter, :persist_with_callbacks
 
   def update_attribute(attribute, value)
     self.send("#{attribute}=", value)
   end
+
+  def save
+    nil
+  end  
 
   def read_attribute(name)
     #yeah, evals are evil, but it works and it's for testing purposes only. we assume read_attribute is defined the same as in AR wherever we include this module
@@ -157,5 +161,15 @@ describe VisitCounter do
       @d.counter.should == 11
     end
   end
+  
+  describe "persist with callbacks" do
+    it "should use save method" do
+      @d = DummyObject.new
+      @d.class.persist_with_callbacks = true
+      @d.stub!(:id).and_return(1)
+      @d.should_receive(:save)
+      @d.incr_counter :counter
+    end  
+  end  
 
 end
