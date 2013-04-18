@@ -74,7 +74,6 @@ module VisitCounter
       def persist(object, staged_count, diff, name)
         VisitCounter::Store.engine.with_lock(object) do
           if object.class.persist_with_callbacks
-            p object.class.persist_with_callbacks
             object.send("#{name}=", staged_count + diff )
             object.save
           else  
