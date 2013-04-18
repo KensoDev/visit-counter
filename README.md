@@ -55,11 +55,11 @@ if you want the counter to persist to database once every 100 views.
 
 if you need to run callbacks for whatever reason after you update the counter just:
   
-   class Foo < ActiveRecord::Base
-      include VisitCounter
-      cached_counter :counter_name
-      self.persist_with_callbacks = true
-    end   
+  class Foo < ActiveRecord::Base
+    include VisitCounter
+    cached_counter :counter_name
+    self.update_callback_method = :update_something
+  end   
 
 ## Contributing
 

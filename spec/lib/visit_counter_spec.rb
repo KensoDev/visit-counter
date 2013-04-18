@@ -3,13 +3,13 @@ require "spec_helper"
 class DummyObject
   include VisitCounter
 
-  attr_accessor :counter, :persist_with_callbacks
+  attr_accessor :counter, :update_callback_method
 
   def update_attribute(attribute, value)
     self.send("#{attribute}=", value)
   end
 
-  def save
+  def update_something
     nil
   end  
 
@@ -163,11 +163,11 @@ describe VisitCounter do
   end
   
   describe "persist with callbacks" do
-    it "should use save method" do
+    it "should use update_something method" do
       @d = DummyObject.new
-      @d.class.persist_with_callbacks = true
+      @d.class.update_callback_method = :update_something
       @d.stub!(:id).and_return(1)
-      @d.should_receive(:save)
+      @d.should_receive(:update_something)
       @d.incr_counter :counter
     end  
   end  
