@@ -3,7 +3,7 @@ require "spec_helper"
 class DummyObject
   include VisitCounter
 
-  attr_accessor :counter, :update_callback_method
+  attr_accessor :counter, :update_callback_method_or_proc
 
   def update_attribute(attribute, value)
     self.send("#{attribute}=", value)
@@ -163,13 +163,22 @@ describe VisitCounter do
   end
   
   describe "persist with callbacks" do
-    it "should use save method" do
+    it "should use update_something method" do
       @d = DummyObject.new
-      @d.class.update_callback_method = :update_something
+      @d.class.update_callback_method_or_proc = :update_something
       @d.stub!(:id).and_return(1)
       @d.should_receive(:update_something)
       @d.incr_counter :counter
-    end  
-  end  
+    end
+
+    it "should use save method" do
+      @d = DummyObject.new
+      proc = ->(p){ p *2 }
+      @d.class.update_callback_method_or_proc = proc
+      @d.stub!(:id).and_return(1)
+      proc.should_receive(:call).with(@d)
+      @d.incr_counter :counter
+    end
+  end
 
 end
