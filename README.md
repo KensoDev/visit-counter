@@ -47,8 +47,8 @@ so you might want to do something like that:
     class Foo < ActiveRecord::Base
        include VisitCounter
        cached_counter :counter_name
-       visit_counter_threshold_method = :static
-       visit_counter_threshold = 100
+       self.visit_counter_threshold_method = :static
+       self.visit_counter_threshold = 100
     end
 
 if you want the counter to persist to database once every 100 views.
@@ -58,7 +58,7 @@ if you need to run callbacks for whatever reason after you update the counter ju
    class Foo < ActiveRecord::Base
       include VisitCounter
       cached_counter :counter_name
-      persist_with_callbacks = true
+      self.persist_with_callbacks = true
     end   
 
 ## Contributing
